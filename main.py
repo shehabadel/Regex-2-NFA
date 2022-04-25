@@ -1,7 +1,7 @@
 
 import re 
 import sys 
-from regex2nfa import regex2nfa 
+from regex2nfa import regex2nfa, transformAux 
 from visualize_nfa import visualize, prepareForDrawing
 
 
@@ -28,17 +28,9 @@ def validate(regex):
         
         
 def convert(regex):
-    end_state = 0
-    start_state = 0
-    prev_char = 0
-    prev_start = 0
-    flag=False
-    global states
-    states = {"S0": {"terminalState": False}}
-    validate(regex) 
-    _,end_state,_,_,prev_start,_=regex2nfa(regex,states,end_state,start_state,prev_char,prev_start,flag)
-    nfa = prepareForDrawing(states, end_state, prev_start)
     
+    validate(regex)
+    nfa=transformAux(regex)   
     visualize(nfa)
           
         
@@ -48,6 +40,6 @@ if __name__ == "__main__":
     #initialize regex-to-nfa conversion
     #if len(sys.argv) == 2:
         #convert(sys.argv[1])
-    convert("((a+b)+c)*")
+    convert("0(1+0)|0*")
     #else:
      #   raise Exception("No expression entered !")

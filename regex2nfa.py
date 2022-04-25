@@ -2,18 +2,18 @@ import collections
 import json
 
 def OrSolver(index,regex,states,end_state):
-    oring_start = end_state + 1  # 3
-    oring_prev = end_state + 1 # 3
-    oring_prev_char = end_state + 1 # 3
-    oring_end = end_state + 1 # 3
+    start_state = end_state + 1  
+    prev_state = end_state + 1 
+    prev_char = end_state + 1 
+    end_state = end_state + 1 
     flag=False
     # create new state to indicate we are working with bracket regex
-    states.update( { "S"+str(oring_end) : { "terminalState": False } })              
-    _,oring_end, oring_start, oring_prev_char, oring_prev,flag = regex2nfa(regex[index], states, oring_end, oring_start, oring_prev_char, oring_prev, flag)
+    states.update( { "S"+str(end_state) : { "terminalState": False } })              
+    _,end_state, start_state, prev_char, prev_state,flag,_ = regex2nfa(regex[index:], states, end_state, start_state, prev_char, prev_state, flag)
     if (flag):
-        return index, oring_prev, oring_start, oring_end
+        return index, prev_state, start_state, end_state
     else:
-        return len(regex), oring_prev, oring_start, oring_end
+        return len(regex), prev_state, start_state, end_state
         
 
 def Bracketsolver(substring, end_state, regex,states,flag):
@@ -23,7 +23,7 @@ def Bracketsolver(substring, end_state, regex,states,flag):
     b_prev=end_state+1
     
     states.update({"S"+str(bracket_start):{"terminalState" : False}})
-    _,bracket_end,bracket_start,b_char,b_prev,_=regex2nfa(substring,states,bracket_end,bracket_start,b_char, b_prev,flag)
+    _,bracket_end,bracket_start,b_char,b_prev,_,_=regex2nfa(substring,states,bracket_end,bracket_start,b_char, b_prev,flag)
     return b_prev, bracket_start, bracket_end
     
 
@@ -67,9 +67,8 @@ def regex2nfa(regex, states, end_state, start_state, prev_char, prev_start,flag)
         else:
             end_state, start_state, prev_char, prev_start,_ = CreateState(
                 regex, i, end_state, start_state, prev_char, prev_start, states,flag)      
-            i += 1
-
-    return states,end_state,start_state,prev_char,prev_start,flag
+            i += 1        
+    return states,end_state,start_state,prev_char,prev_start,flag,i
 
 
 def getSubString(regex, index):
@@ -109,5 +108,28 @@ def CreateState(regex, index, end_state, start_state, prev_char, prev_start, sta
         start_state = end_state
     return end_state, start_state, prev_char, prev_start,flag
 
+def prepareForDrawing(states, end_state, prev_start):
+            # make the last state as out state
+    states["S"+str(end_state)]["terminalState"] = True
+    # sort the state ascending
+    states = collections.OrderedDict(sorted(states.items()))
+    # loop over sorted states and save them as the given example to json file
+    # return the json file content to be displayed in graph format
+    states.update({"startingState": ("S" + str(prev_start))})
+    with open('out/nfa.json', 'w') as fp:
+        json.dump(states, fp, ensure_ascii=True)
+    print(states)
+    return states
 
-
+def transformAux(regex):
+    end_state = 0
+    start_state = 0
+    prev_char = 0
+    prev_start = 0
+    flag=False
+    global states
+    states = {"S0": {"terminalState": False}}
+    _,end_state,_,_,prev_start,_,i=regex2nfa(regex,states,end_state,start_state,prev_char,prev_start,flag)
+    if i==len(regex):
+        nfa = prepareForDrawing(states, end_state, prev_start)
+    return nfa
