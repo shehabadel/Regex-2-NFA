@@ -127,3 +127,12 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+
+
+
+pyqt5test.py
+out/nfa-graph
+out/nfa-graph.gif
+out/nfa.json
+out/nfa-graph.gif

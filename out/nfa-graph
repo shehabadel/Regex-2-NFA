@@ -1,0 +1,20 @@
+// NFA Visualization
+digraph {
+	graph [rankdir=LR]
+	start [label=start shape=plaintext]
+	S0 [label=S0 shape=circle]
+	S1 [label=S1 shape=circle]
+	S0 -> S1 [label="Transition a"]
+	S2 [label=S2 shape=circle]
+	S1 -> S2 [label="Transition b"]
+	S6 [label=S6 shape=doublecircle]
+	S2 -> S6 [label="ε"]
+	S3 [label=S3 shape=circle]
+	S4 [label=S4 shape=circle]
+	S3 -> S4 [label="Transition a"]
+	S4 -> S6 [label="ε"]
+	S5 [label=S5 shape=circle]
+	start -> S5
+	S5 -> S0 [label="     ε     "]
+	S5 -> S3 [label="      ε       "]
+}
