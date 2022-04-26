@@ -40,6 +40,6 @@ if __name__ == "__main__":
     #initialize regex-to-nfa conversion
     #if len(sys.argv) == 2:
         #convert(sys.argv[1])
-    convert("0(1+0)|0*")
+    convert("ab+a")
     #else:
      #   raise Exception("No expression entered !")
