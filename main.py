@@ -43,8 +43,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
 
 if __name__ == "__main__":
-    app = QtWidgets.QApplication(sys.argv)
 
+    #Run GUI
+    app = QtWidgets.QApplication(sys.argv)
     window = MainWindow()
     window.show()
     app.exec()
