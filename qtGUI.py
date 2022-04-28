@@ -8,6 +8,7 @@
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
 
+from re import X
 from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
     QMetaObject, QObject, QPoint, QRect,
     QSize, QTime, QUrl, Qt)
@@ -17,10 +18,10 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QHBoxLayout, QLabel, QMainWindow,
     QMenuBar, QPushButton, QScrollArea, QSizePolicy,
-    QStatusBar, QTextEdit, QWidget)
+    QStatusBar, QTextEdit, QWidget, QMessageBox)
 from PySide6.QtSvgWidgets import QSvgWidget
 from PySide6.QtSvg import *
-from regex2nfa import regex2nfa, transformAux 
+from regex2nfa import regex2nfa, transformAux, validate
 from visualize_nfa import visualize, prepareForDrawing
 import time
 import os
@@ -37,26 +38,41 @@ def waitUntilSVG(file_path):
             break
     print("done waiting")
 
+
 class Ui_MainWindow(object):
+    def validateRegex(self, regex, flag):
+        try:
+            validate(regex)
+            flag=True
+        except Exception as e:
+            print(str(e))
+            self.show_pop(str(e))
+            flag=False
+        return flag
+
+    
     def convert2NFA(self):
         #Retreive entered regex from the text edit
         regex = self.textEdit.toPlainText()
-        #validate(regex)
-        
-        #Start converting the regex to NFA
-        nfa = transformAux(regex)
-
-        #Visualize the converted NFA
-        visualize(nfa)
-        svg_file_path='out/nfa-graph.svg'
-        #Wait until the visualized NFA-graph.svg is created
-        waitUntilSVG(svg_file_path)
-
-        #Render the visualized NFA-graph.svg on the layout
-        self.get_size=QSvgRenderer(svg_file_path)
-        self.SVGWidget=QSvgWidget(svg_file_path)
-        self.SVGWidget.setFixedSize(self.get_size.defaultSize())
-        self.scrollArea.setWidget(self.SVGWidget)
+        flag=True
+        flag=self.validateRegex(regex,flag)
+        print(flag)
+        if flag:
+            try:
+            #Start converting the regex to NFA
+                nfa = transformAux(regex)
+            #Visualize the converted NFA
+                visualize(nfa)
+                svg_file_path='out/nfa-graph.svg'
+            #Wait until the visualized NFA-graph.svg is created
+                waitUntilSVG(svg_file_path)
+            #Render the visualized NFA-graph.svg on the layout
+                self.get_size=QSvgRenderer(svg_file_path)
+                self.SVGWidget=QSvgWidget(svg_file_path)
+                self.SVGWidget.setFixedSize(self.get_size.defaultSize())
+                self.scrollArea.setWidget(self.SVGWidget)
+            except Exception as e:
+                self.show_pop(str(e))
     
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
@@ -109,6 +125,7 @@ class Ui_MainWindow(object):
 
         QMetaObject.connectSlotsByName(MainWindow)
     # setupUi
+    
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
@@ -117,3 +134,9 @@ class Ui_MainWindow(object):
         self.label_2.setText(QCoreApplication.translate("MainWindow", u"NFA/DFA outpt", None))
     # retranslateUi
 
+    def show_pop(self, errorMsg):
+        msg=QMessageBox()
+        msg.setWindowTitle("Exception thrown")
+        msg.setText(errorMsg)
+
+        x = msg.exec_()
