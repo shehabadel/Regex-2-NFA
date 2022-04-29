@@ -68,6 +68,6 @@ def visualize(nfa):
                     # create an edge between two states
                     graph.edge(state, nfa_copy[state][successor], label=successor)
     # set output format to SVG
-    graph.format = 'gif'
+    graph.format = 'svg'
     # render final graph
-    graph.render('out/nfa-graph', view=True)
+    graph.render('out/nfa-graph', view=False)
