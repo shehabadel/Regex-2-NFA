@@ -2,7 +2,9 @@ import collections
 import json
 import re 
 import random
-
+import os
+import ast
+from natsort import natsorted
 
 RANGES = "\[.-.\]|\[.-..-.\]" 
 LETTERS = "[A-Za-z]" #allows ranges of letters A-Z and a-z
@@ -147,6 +149,7 @@ def prepareForDrawing(states, next_state, prev_start):
     states.update({"startingState": ("S" + str(prev_start))})
     with open('out/nfa.json', 'w') as fp:
         json.dump(states, fp, ensure_ascii=True)
+    fp.close()
     print(states)
     return states
 
@@ -168,3 +171,74 @@ def transformAux(regex):
     if i == len(regex):
         nfa = prepareForDrawing(states, next_state, prev_start)
     return nfa
+
+def createFormalDescription():
+    with open('out/nfa.json', 'r') as fp:
+        states=json.load(fp)
+    fp.close()
+    print("*******************CREATE FORMAL DESCRIPTION************")
+    print(states)
+    #Initializating the Formal description object
+    formalDescription={
+        "setOfStates":[""],
+        "setOfSymbols":[""],
+        "transitions":{},
+        "startState":"",
+        "setOfFinalStates":{""}
+    }
+    #Adding the start state to the formal description
+    finalStates=set()
+    #Taking a shallow copy of the original dictionary
+    modifiedStates = states.copy()
+    #Adding value of startState to the formalDescription
+    formalDescription['startState']=modifiedStates['startingState']
+    #Removing startingState from the modifiedStates in order to loop
+    #On the States
+    del modifiedStates['startingState']
+    #Re-initializing the setOfStates list to be
+    #An empty set in order to add the states to it
+    formalDescription['setOfStates']=set()
+
+    #Re-initializing the setOfSymbols to be an empty set
+    #In order to add all the symbols used to it
+    formalDescription['setOfSymbols']=set()
+
+    #Looping over modifiedStates items which contains
+    #The states
+    for state, stateDict  in modifiedStates.items():
+        #Adding each state to the setOfStates
+        formalDescription['setOfStates'].add(state)
+        #Looping over each state to find its
+        #terminalState and add it to the
+        #finalStates if it was True
+        for key,value in stateDict.items():
+            if key=='terminalState':
+                if value == True:
+                    finalStates.add(state)
+            #Looping over transitions to add it
+            #to the setOfSymbols
+            if key.startswith('Transition'):
+                #Splitting the transition by the splitter space
+                #which will be ['Transition','a'] for example
+                #So we will always pick the second element to add
+                #it to the setOfSymbols
+                transition= key.split(' ')
+                formalDescription["setOfSymbols"].add(transition[1])
+    
+    #Sorting and adding the finalStates to setOfFinalStates in formalDescription
+    formalDescription["setOfStates"]=natsorted(formalDescription["setOfStates"])
+    formalDescription["setOfFinalStates"]=finalStates
+    
+    #Loop again in order to add the transitions
+    #to the formalDescription
+    setOfTransitions={}
+    for state, stateDict  in modifiedStates.items():
+        for key,value in stateDict.items():
+            if key.startswith('Transition') or key.startswith('ε'):
+                setOfTransitions.update({state:{key:value}})
+    
+    #Sort the list of transitions ascendingly
+    #Then adding it to the formalDescription
+    setOfTransitions = collections.OrderedDict(sorted(setOfTransitions.items()))
+    formalDescription["transitions"]=setOfTransitions
+    return formalDescription

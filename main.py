@@ -5,7 +5,7 @@ import random
 from regex2nfa import regex2nfa, transformAux, validate
 from visualize_nfa import visualize, prepareForDrawing
 from PySide6 import QtCore, QtWidgets, QtGui
-from qtGUI2 import Ui_MainWindow
+from qtGUI3 import Ui_MainWindow
 
 
 def convert(regex):
