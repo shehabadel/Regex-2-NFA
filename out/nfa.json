@@ -1,1 +1,1 @@
-{"S0": {"terminalState": false, "Transition \\": "S1"}, "S1": {"terminalState": false, "Transition \\": "S2"}, "S2": {"terminalState": false, "Transition s": "S3"}, "S3": {"terminalState": true}, "startingState": "S0"}
+{"S0": {"terminalState": false, "Transition l": "S1"}, "S1": {"terminalState": false, "Transition o": "S2"}, "S2": {"terminalState": false, "Transition l": "S3"}, "S3": {"terminalState": true}, "startingState": "S0"}

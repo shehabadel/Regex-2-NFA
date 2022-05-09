@@ -5,9 +5,9 @@ digraph {
 	S0 [label=S0 shape=circle]
 	start -> S0
 	S1 [label=S1 shape=circle]
-	S0 -> S1 [label="Transition \"]
+	S0 -> S1 [label="Transition l"]
 	S2 [label=S2 shape=circle]
-	S1 -> S2 [label="Transition \"]
+	S1 -> S2 [label="Transition o"]
 	S3 [label=S3 shape=doublecircle]
-	S2 -> S3 [label="Transition s"]
+	S2 -> S3 [label="Transition l"]
 }
