@@ -28,9 +28,3 @@ if __name__ == "__main__":
     window = MainWindow()
     window.show()
     app.exec()
-    #initialize regex-to-nfa conversion
-    #if len(sys.argv) == 2:
-        #convert(sys.argv[1])
-    #convert("ab+a")
-    #else:
-     #   raise Exception("No expression entered !")

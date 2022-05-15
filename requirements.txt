@@ -1,1 +1,5 @@
-pyside6 graphviz natsort pyqt5 pyqt5-tools
+pyside6 
+graphviz 
+natsort 
+pyqt5 
+pyqt5-tools
